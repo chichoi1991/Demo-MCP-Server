@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Environment variables
+.env
+
+# IDE specific files
+.idea/
+.vscode/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Local development config
+config.local.json
+
+# Documentation
+README.md
+LICENSE
+
+# Tests
+tests/
