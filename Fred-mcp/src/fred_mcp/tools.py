@@ -34,44 +34,44 @@ def get_api_key() -> str | None:
 # ── Series ID mappings by theme ──────────────────────────────────────
 
 CONSUMER_DEMAND_SERIES = {
-    "PCEDG": "Personal Consumption Expenditures: Durable Goods (Billions $)",
-    "UMCSENT": "University of Michigan: Consumer Sentiment Index",
-    "HOUST": "Housing Starts: Total New Privately Owned (Thousands)",
-    "HSN1F": "New One Family Houses Sold (Thousands)",
-    "TOTALSA": "Total Vehicle Sales (Millions)",
+    "PCEDG": "내구재 개인소비지출 (10억 달러)",
+    "UMCSENT": "미시건대 소비자심리지수",
+    "HOUST": "신규주택착공건수 (천 건)",
+    "HSN1F": "신규주택판매 (천 건)",
+    "TOTALSA": "자동차 총판매 (백만 대)",
 }
 
 COST_PRESSURE_SERIES = {
-    "DEXKOUS": "KRW/USD Exchange Rate",
-    "DCOILWTICO": "Crude Oil Prices: WTI ($ per Barrel)",
-    "WPUSI012011": "PPI: Copper and Copper Semimfg Products",
-    "WPU101": "PPI: Iron and Steel",
-    "PCU325211325211": "PPI: Plastics Material and Resins",
+    "DEXKOUS": "원/달러 환율",
+    "DCOILWTICO": "WTI 원유가격 (배럴당 달러)",
+    "WPUSI012011": "PPI: 구리 및 구리 반제품",
+    "WPU101": "PPI: 철강",
+    "PCU325211325211": "PPI: 합성수지",
 }
 
 MACRO_ENVIRONMENT_SERIES = {
-    "GDPC1": "Real GDP (Billions of Chained 2017 $)",
-    "CPIAUCSL": "CPI: All Urban Consumers, All Items",
-    "CPIDURASL": "CPI: Durables",
-    "FEDFUNDS": "Federal Funds Effective Rate (%)",
-    "UNRATE": "Unemployment Rate (%)",
-    "DGS10": "10-Year Treasury Constant Maturity Rate (%)",
-    "DGS2": "2-Year Treasury Constant Maturity Rate (%)",
+    "GDPC1": "실질 GDP (2017년 기준 10억 달러)",
+    "CPIAUCSL": "소비자물가지수 (CPI 전체)",
+    "CPIDURASL": "소비자물가지수: 내구재",
+    "FEDFUNDS": "연방기금금리 (%)",
+    "UNRATE": "실업률 (%)",
+    "DGS10": "10년물 국채금리 (%)",
+    "DGS2": "2년물 국채금리 (%)",
 }
 
 INDUSTRY_PRODUCTION_SERIES = {
-    "INDPRO": "Industrial Production Index (2017=100)",
-    "DGORDER": "Manufacturers' New Orders: Durable Goods (Millions $)",
-    "AMTMNO": "Manufacturers' New Orders: Total Manufacturing (Millions $)",
-    "IPMAN": "Industrial Production: Manufacturing (2017=100)",
+    "INDPRO": "산업생산지수 (2017=100)",
+    "DGORDER": "내구재 신규주문 (백만 달러)",
+    "AMTMNO": "전체 제조업 신규주문 (백만 달러)",
+    "IPMAN": "제조업 생산지수 (2017=100)",
 }
 
 EV_ENERGY_SERIES = {
-    "TOTALSA": "Total Vehicle Sales (Millions)",
-    "AISRSA": "Auto Inventory/Sales Ratio",
-    "DCOILWTICO": "Crude Oil Prices: WTI ($ per Barrel)",
-    "GASREGW": "US Regular All Formulations Gas Price ($ per Gallon)",
-    "IPG3361T3S": "Industrial Production: Motor Vehicles and Parts (2017=100)",
+    "TOTALSA": "자동차 총판매 (백만 대)",
+    "AISRSA": "자동차 재고/판매 비율",
+    "DCOILWTICO": "WTI 원유가격 (배럴당 달러)",
+    "GASREGW": "미국 휘발유 소매가격 (갤런당 달러)",
+    "IPG3361T3S": "자동차 및 부품 생산지수 (2017=100)",
 }
 
 THEME_SERIES_MAP = {
