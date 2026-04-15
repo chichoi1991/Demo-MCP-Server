@@ -44,7 +44,7 @@ CONSUMER_DEMAND_SERIES = {
 COST_PRESSURE_SERIES = {
     "DEXKOUS": "원/달러 환율",
     "DCOILWTICO": "WTI 원유가격 (배럴당 달러)",
-    "WPUSI012011": "PPI: 구리 및 구리 반제품",
+    "WPUSI019011": "PPI: 구리 및 구리 제품",
     "WPU101": "PPI: 철강",
     "PCU325211325211": "PPI: 합성수지",
 }
@@ -52,7 +52,7 @@ COST_PRESSURE_SERIES = {
 MACRO_ENVIRONMENT_SERIES = {
     "GDPC1": "실질 GDP (2017년 기준 10억 달러)",
     "CPIAUCSL": "소비자물가지수 (CPI 전체)",
-    "CPIDURASL": "소비자물가지수: 내구재",
+    "CUSR0000SAD": "소비자물가지수: 내구재 (1982-84=100)",
     "FEDFUNDS": "연방기금금리 (%)",
     "UNRATE": "실업률 (%)",
     "DGS10": "10년물 국채금리 (%)",
@@ -255,17 +255,11 @@ def format_series_result(result: Dict[str, Any], description: str = "") -> str:
     lines.append(f"Units: {units} | Data points: {result['count']}")
     lines.append("")
 
-    # Show latest 10 observations (already sorted desc)
-    display = observations[:10]
-    for obs in display:
+    # Show all observations (sorted desc — newest first)
+    for obs in observations:
         date = obs.get("date", "N/A")
         value = obs.get("value", ".")
         lines.append(f"  {date}: {value}")
-
-    if len(observations) > 10:
-        oldest = observations[-1]
-        lines.append(f"  ... ({len(observations) - 10} more data points)")
-        lines.append(f"  {oldest.get('date', 'N/A')}: {oldest.get('value', '.')}")
 
     lines.append("---")
     return "\n".join(lines)
