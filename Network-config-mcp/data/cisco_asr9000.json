@@ -1,0 +1,66 @@
+{
+  "vendor": "cisco",
+  "vendor_aliases": ["cisco", "시스코"],
+  "model": "asr9000",
+  "model_display_name": "Cisco ASR 9000 Series Aggregation Services Router",
+  "model_aliases": [
+    "asr 9000",
+    "asr-9000",
+    "asr9000",
+    "asr9k",
+    "asr 9k",
+    "asr-9k",
+    "9000 series",
+    "aggregation services router"
+  ],
+  "os": "IOS XR",
+  "os_release": "26.1.x",
+  "description": "운영 환경 기준 Cisco ASR 9000 (IOS XR 26.1.x) 코어/애그리게이션 라우터의 표준 운영 컨피그레이션. 시스템 관리, AAA, 관리/물리 인터페이스, IS-IS/OSPF/BGP 라우팅, MPLS LDP, QoS 정책, 보안 ACL, SNMP를 포함한 단일 전체 설정.",
+  "full_config": "!\n! Cisco ASR 9000 Series — Standard Operational Baseline\n! IOS XR Release 26.1.x\n! Role: Core / Aggregation Router\n!\n!======================================================================\n! 1. System\n!======================================================================\nhostname ASR9000-Core-Router\ndomain name example.com\n!\nclock timezone UTC 0\nntp\n server 10.1.1.1\n server 10.1.1.2 prefer\n source MgmtEth0/RSP0/CPU0/0\n!\nbanner login ^C\n*****************************************************************\n*  Authorized access only. Disconnect IMMEDIATELY if you are    *\n*  not an authorized user. All activity is monitored and logged.*\n*****************************************************************\n^C\n!\nlogging buffered 4096 debug\nlogging console critical\nlogging trap informational\nlogging 10.1.1.10 vrf default severity info\nlogging source-interface Loopback0\nservice timestamps log datetime msec\nservice timestamps debug datetime msec\n!\n!======================================================================\n! 2. AAA / TACACS+ / RADIUS / SSH\n!======================================================================\ntacacs-server host 10.1.1.20 port 49\n key 0 MyTACACSKey123\n!\nradius-server host 10.1.1.21 auth-port 1812 acct-port 1813\nradius-server key 0 MyRadiusKey456\n!\naaa authentication login default group tacacs+ local\naaa authentication enable default group tacacs+ enable\naaa authorization exec default group tacacs+ local\naaa accounting exec default start-stop group tacacs+\naaa accounting commands default start-stop group tacacs+\n!\nssh server v2\nssh server vrf default\nssh server vrf mgmt\nssh timeout 30\nssh server rate-limit 60\nssh server session-limit 16\nssh key-exchange group dh-group14-sha1\n!\nline default\n exec-timeout 10 0\n session-timeout 15\n transport input ssh\n!\nline console\n exec-timeout 10 0\n!\nvty-pool default 0 16\n!\n!======================================================================\n! 3. Management Interface (Out-of-Band) + VRF\n!======================================================================\nvrf mgmt\n address-family ipv4 unicast\n address-family ipv6 unicast\n!\ninterface MgmtEth0/RSP0/CPU0/0\n description ** OOB Management — Primary **\n vrf mgmt\n ipv4 address 192.168.1.100 255.255.255.0\n ipv6 address 2001:db8::100/64\n no shutdown\n!\ninterface MgmtEth0/RSP0/CPU0/1\n description ** OOB Management — Secondary **\n vrf mgmt\n ipv4 address 192.168.1.101 255.255.255.0\n no shutdown\n!\nrouter static\n address-family ipv4 unicast\n  0.0.0.0/0 10.0.1.254\n !\n vrf mgmt\n  address-family ipv4 unicast\n   0.0.0.0/0 192.168.1.1\n  !\n !\n!\n!======================================================================\n! 4. Loopback (Router-ID / IGP / BGP source)\n!======================================================================\ninterface Loopback0\n description ** Router-ID / IGP / iBGP Source **\n ipv4 address 10.10.10.1 255.255.255.255\n ipv6 address 2001:db8:ffff::1/128\n!\n!======================================================================\n! 5. Physical Core / Access Interfaces\n!======================================================================\ninterface TenGigE0/0/0/0\n description ** UPLINK -> Core-1 **\n mtu 9216\n ipv4 address 10.0.1.1 255.255.255.252\n ipv6 address 2001:db8:1::1/127\n load-interval 30\n flow-control ingress\n no shutdown\n!\ninterface HundredGigE0/1/0/0\n description ** UPLINK -> Core-2 (100GE) **\n mtu 9216\n ipv4 address 10.0.2.1 255.255.255.252\n ipv6 address 2001:db8:2::1/127\n load-interval 30\n no shutdown\n!\ninterface GigabitEthernet0/2/0/0\n description ** Access -> Aggregation-Switch-A **\n mtu 1514\n ipv4 address 172.16.1.1 255.255.255.0\n negotiation auto\n no shutdown\n!\n!======================================================================\n! 6. IS-IS (IGP) + Segment Routing MPLS\n!======================================================================\nrouter isis CoreISIS\n net 49.0001.0000.0000.0001.00\n is-type level-2-only\n nsf ietf\n log adjacency changes\n address-family ipv4 unicast\n  metric-style wide\n  segment-routing mpls\n !\n address-family ipv6 unicast\n  metric-style wide\n !\n interface Loopback0\n  passive\n  address-family ipv4 unicast\n   prefix-sid index 1\n  !\n  address-family ipv6 unicast\n  !\n !\n interface TenGigE0/0/0/0\n  point-to-point\n  address-family ipv4 unicast\n   metric 10\n  !\n  address-family ipv6 unicast\n   metric 10\n  !\n !\n interface HundredGigE0/1/0/0\n  point-to-point\n  address-family ipv4 unicast\n   metric 5\n  !\n  address-family ipv6 unicast\n   metric 5\n  !\n !\n!\n!======================================================================\n! 7. OSPF (Optional secondary IGP for legacy aggregation)\n!======================================================================\nrouter ospf 1\n router-id 10.10.10.1\n log adjacency changes detail\n auto-cost reference-bandwidth 100000\n timers throttle spf 50 200 5000\n nsf cisco\n area 0\n  interface Loopback0\n   passive enable\n  !\n  interface GigabitEthernet0/2/0/0\n   cost 10\n   hello-interval 10\n   dead-interval 40\n  !\n !\n!\n!======================================================================\n! 8. BGP\n!======================================================================\nrouter bgp 65000\n bgp router-id 10.10.10.1\n bgp graceful-restart restart-time 300\n bgp graceful-shutdown\n !\n address-family ipv4 unicast\n  redistribute connected\n  redistribute static\n  maximum-paths ebgp 4 eibgp 4\n !\n address-family ipv6 unicast\n  redistribute connected\n  maximum-paths ebgp 4\n !\n neighbor-group CORE-PEERS\n  remote-as 65001\n  update-source Loopback0\n  timers 10 30\n  timers connect-retry 30\n  description ** eBGP Core Peers **\n  address-family ipv4 unicast\n   send-community-ebgp\n  !\n  address-family ipv6 unicast\n   send-community-ebgp\n  !\n !\n neighbor 10.0.1.2\n  use neighbor-group CORE-PEERS\n  description Core-1-BGP\n !\n neighbor 10.0.2.2\n  use neighbor-group CORE-PEERS\n  description Core-2-BGP\n !\n!\n!======================================================================\n! 9. MPLS LDP\n!======================================================================\nmpls ldp\n router-id 10.10.10.1\n graceful-restart\n address-family ipv4\n !\n interface TenGigE0/0/0/0\n !\n interface HundredGigE0/1/0/0\n !\n!\n!======================================================================\n! 10. QoS Policy (Ingress/Egress 3-class baseline)\n!======================================================================\nclass-map match-any CRITICAL-TRAFFIC\n match dscp ef\n match protocol bgp\n end-class-map\n!\nclass-map match-any VIDEO-TRAFFIC\n match dscp af41 af42\n match protocol http https\n end-class-map\n!\nclass-map match-any DEFAULT-TRAFFIC\n match any\n end-class-map\n!\npolicy-map QOS-INGRESS\n class CRITICAL-TRAFFIC\n  priority level 1\n  police rate 100 mbps burst 10 ms\n !\n class VIDEO-TRAFFIC\n  priority level 2\n  police rate 500 mbps burst 50 ms\n !\n class DEFAULT-TRAFFIC\n  queue-limit 100 ms\n  random-detect dscp-based\n !\n end-policy-map\n!\ninterface TenGigE0/0/0/0\n service-policy input QOS-INGRESS\n service-policy output QOS-INGRESS\n!\ninterface HundredGigE0/1/0/0\n service-policy input QOS-INGRESS\n service-policy output QOS-INGRESS\n!\n!======================================================================\n! 11. Security ACL (Management plane lockdown)\n!======================================================================\nipv4 access-list MGMT-ACL\n 10 permit tcp 10.1.0.0/16 any eq 22\n 20 permit tcp 192.168.1.0/24 any eq 22\n 30 deny tcp any any eq 22 log\n 40 permit ipv4 any any\n!\ninterface MgmtEth0/RSP0/CPU0/0\n ipv4 access-group MGMT-ACL ingress\n!\n!======================================================================\n! 12. SNMP\n!======================================================================\nsnmp-server community ReadOnlyCommunity RO\nsnmp-server host 10.1.1.30 traps version 2c ReadOnlyCommunity\nsnmp-server traps bgp\nsnmp-server traps isis\nsnmp-server traps ospf state-change\nsnmp-server traps mpls ldp\nsnmp-server contact noc@example.com\nsnmp-server location DC1-Rack-A12\n!\nend\n",
+  "references": [
+    {
+      "title": "ASR 9000 — Configuration Guides Index",
+      "url": "https://www.cisco.com/c/en/us/support/routers/asr-9000-series-aggregation-services-routers/products-installation-and-configuration-guides-list.html"
+    },
+    {
+      "title": "System Management Configuration Guide (Hostname / NTP / Logging / Banner)",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/system-management/configuration/guide/"
+    },
+    {
+      "title": "System Security Configuration Guide (AAA / TACACS+ / RADIUS / SSH)",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/system-security/configuration/guide/"
+    },
+    {
+      "title": "Interface and Hardware Component Configuration Guide (MgmtEth / TenGigE / HundredGigE)",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/interfaces/configuration/guide/b-interfaces-hardware-component-cg-asr9000-26xx/configuring-ethernet-interfaces.html"
+    },
+    {
+      "title": "Routing Configuration Guide — IS-IS",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/routing/configuration/guide/b-routing-cg-asr9000-26xx/implementing-is-is.html"
+    },
+    {
+      "title": "Routing Configuration Guide — OSPF",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/routing/configuration/guide/b-routing-cg-asr9000-26xx/implementing-ospf.html"
+    },
+    {
+      "title": "Routing Configuration Guide — BGP",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/routing/configuration/guide/"
+    },
+    {
+      "title": "MPLS Configuration Guide (LDP / RSVP-TE / Segment Routing)",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/mpls/configuration/guide/"
+    },
+    {
+      "title": "Modular QoS Configuration Guide (class-map / policy-map / WRED)",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/qos/configuration/guide/"
+    },
+    {
+      "title": "IP Addresses and Services Configuration Guide (VRF / Static Routing / SNMP)",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/26xx/ip-addresses/configuration/guide/"
+    },
+    {
+      "title": "Cisco ASR 9000 Series — Datasheets & White Papers",
+      "url": "https://www.cisco.com/c/en/us/products/routers/asr-9000-series-aggregation-services-routers/datasheet-listing.html"
+    }
+  ]
+}

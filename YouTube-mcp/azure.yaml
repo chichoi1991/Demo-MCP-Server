@@ -1,0 +1,11 @@
+name: youtube-mcp-python
+metadata:
+  template: azd-init@1.15.1
+services:
+  youtube-mcp-python:
+    project: .
+    host: containerapp
+    language: py
+    docker:
+      path: Dockerfile
+      remoteBuild: true

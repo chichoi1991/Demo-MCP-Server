@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "environmentName": {
+        "value": "${AZURE_ENV_NAME}"
+      },
+      "location": {
+        "value": "${AZURE_LOCATION}"
+      },
+      "telecomDbMcpAuthPythonExists": {
+        "value": "${SERVICE_TELECOM_DB_MCP_AUTH_PYTHON_RESOURCE_EXISTS=false}"
+      },
+      "principalId": {
+        "value": "${AZURE_PRINCIPAL_ID}"
+      },
+      "entraTenantId": {
+        "value": "${ENTRA_TENANT_ID}"
+      },
+      "entraClientId": {
+        "value": "${ENTRA_CLIENT_ID}"
+      },
+      "entraAllowedAudiences": {
+        "value": "${ENTRA_ALLOWED_AUDIENCES=[]}"
+      },
+      "entraEasyAuthEnabled": {
+        "value": "${ENTRA_EASY_AUTH_ENABLED=true}"
+      }
+    }
+}
